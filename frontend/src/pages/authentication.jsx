@@ -1,175 +1,311 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { AuthContext } from '../contexts/AuthContext';
-import { Snackbar } from '@mui/material';
+import * as React from "react";
+import {
+  Avatar,
+  Button,
+  CssBaseline,
+  TextField,
+  Paper,
+  Box,
+  Grid,
+  Typography,
+  MenuItem,
+  Snackbar,
+  Alert,
+  Checkbox,
+  FormControlLabel,
+} from "@mui/material";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../contexts/AuthContext";
 
-
-
-// TODO remove, this demo shouldn't need to reset the theme.
-
-const defaultTheme = createTheme();
+const defaultTheme = createTheme({
+  palette: {
+    primary: { main: "#0D9488" },
+    secondary: { main: "#102A43" },
+  },
+});
 
 export default function Authentication() {
+  const [username, setUsername] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [name, setName] = React.useState("");
+  const [role, setRole] = React.useState("student");
+  const [error, setError] = React.useState("");
+  const [message, setMessage] = React.useState("");
+  const [formState, setFormState] = React.useState(0);
+  const [open, setOpen] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [acceptedTerms, setAcceptedTerms] = React.useState(false);
 
-    
+  const { handleRegister, handleLogin } = React.useContext(AuthContext);
+  const navigate = useNavigate();
 
-    const [username, setUsername] = React.useState();
-    const [password, setPassword] = React.useState();
-    const [name, setName] = React.useState();
-    const [error, setError] = React.useState();
-    const [message, setMessage] = React.useState();
-
-
-    const [formState, setFormState] = React.useState(0);
-
-    const [open, setOpen] = React.useState(false)
-
-
-    const { handleRegister, handleLogin } = React.useContext(AuthContext);
-
-    let handleAuth = async () => {
-        try {
-            if (formState === 0) {
-
-                let result = await handleLogin(username, password)
-
-
-            }
-            if (formState === 1) {
-                let result = await handleRegister(name, username, password);
-                console.log(result);
-                setUsername("");
-                setMessage(result);
-                setOpen(true);
-                setError("")
-                setFormState(0)
-                setPassword("")
-            }
-        } catch (err) {
-
-            console.log(err);
-            let message = (err.response.data.message);
-            setError(message);
-        }
+  const handleAuth = async (event) => {
+    event.preventDefault();
+    if (!acceptedTerms) {
+      setError("Please accept the Terms and Conditions and Privacy Policy.");
+      return;
     }
+    setError("");
+    setLoading(true);
 
+    try {
+      if (formState === 0) {
+        await handleLogin(username, password);
+      } else {
+        const result = await handleRegister(name, username, password, role);
 
-    return (
-        <ThemeProvider theme={defaultTheme}>
-            <Grid container component="main" sx={{ height: '100vh' }}>
-                <CssBaseline />
-                <Grid
-                    item
-                    xs={false}
-                    sm={4}
-                    md={7}
-                    sx={{
-                        backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
-                        backgroundRepeat: 'no-repeat',
-                        backgroundColor: (t) =>
-                            t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                    }}
-                />
-                <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-                    <Box
-                        sx={{
-                            my: 8,
-                            mx: 4,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                            <LockOutlinedIcon />
-                        </Avatar>
+        setMessage(result || "Registration successful!");
+        setOpen(true);
+        setName("");
+        setUsername("");
+        setPassword("");
+        setRole("student");
+        setFormState(0);
+      }
+    } catch (err) {
+      setError(
+        err?.response?.data?.message ||
+          "Something went wrong. Please try again.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  return (
+    <ThemeProvider theme={defaultTheme}>
+      <CssBaseline />
 
-                        <div>
-                            <Button variant={formState === 0 ? "contained" : ""} onClick={() => { setFormState(0) }}>
-                                Sign In
-                            </Button>
-                            <Button variant={formState === 1 ? "contained" : ""} onClick={() => { setFormState(1) }}>
-                                Sign Up
-                            </Button>
-                        </div>
+      <Grid container component="main" sx={{ minHeight: "100vh" }}>
+        <Grid
+          item
+          xs={false}
+          md={6}
+          sx={{
+            display: { xs: "none", md: "flex" },
+            flexDirection: "column",
+            justifyContent: "center",
+            p: 7,
+            color: "white",
+            background: `
+  radial-gradient(circle at 75% 15%, rgba(45, 212, 191, 0.18), transparent 35%),
+  radial-gradient(circle at 15% 85%, rgba(20, 184, 166, 0.13), transparent 30%),
+  linear-gradient(135deg, #071C27 0%, #102A43 55%, #064E4B 100%)
+`,
+          }}
+        >
+          <Typography variant="h3" fontWeight={800} gutterBottom>
+            Welcome to MockMate
+          </Typography>
+          <Typography variant="h6" sx={{ lineHeight: 1.8 }}>
+            Practise with experienced seniors, get honest feedback, and prepare
+            confidently for your next interview.
+          </Typography>
+        </Grid>
 
-                        <Box component="form" noValidate sx={{ mt: 1 }}>
-                            {formState === 1 ? <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="username"
-                                label="Full Name"
-                                name="username"
-                                value={name}
-                                autoFocus
-                                onChange={(e) => setName(e.target.value)}
-                            /> : <></>}
+        <Grid
+          item
+          xs={12}
+          md={6}
+          component={Paper}
+          elevation={0}
+          square
+          sx={{ display: "flex", alignItems: "center" }}
+        >
+          <Box
+            sx={{
+              width: "100%",
+              maxWidth: 440,
+              mx: "auto",
+              p: { xs: 3, sm: 5 },
+            }}
+          >
+            <Avatar
+              sx={{
+                mx: "auto",
+                mb: 2,
+                bgcolor: "primary.main",
+                width: 52,
+                height: 52,
+              }}
+            >
+              <LockOutlinedIcon />
+            </Avatar>
 
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="username"
-                                label="Username"
-                                name="username"
-                                value={username}
-                                autoFocus
-                                onChange={(e) => setUsername(e.target.value)}
+            <Typography
+              variant="h4"
+              align="center"
+              fontWeight={800}
+              color="secondary.main"
+            >
+              {formState === 0 ? "Welcome back" : "Create account"}
+            </Typography>
 
-                            />
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                name="password"
-                                label="Password"
-                                value={password}
-                                type="password"
-                                onChange={(e) => setPassword(e.target.value)}
+            <Typography
+              align="center"
+              color="text.secondary"
+              sx={{ mt: 1, mb: 3 }}
+            >
+              {formState === 0
+                ? "Sign in to continue to MockMate"
+                : "Join MockMate as a student or mentor"}
+            </Typography>
 
-                                id="password"
-                            />
+            <Box sx={{ display: "flex", mb: 3 }}>
+              <Button
+                fullWidth
+                variant={formState === 0 ? "contained" : "outlined"}
+                onClick={() => {
+                  setFormState(0);
+                  setError("");
+                }}
+              >
+                Sign In
+              </Button>
+              <Button
+                fullWidth
+                variant={formState === 1 ? "contained" : "outlined"}
+                onClick={() => {
+                  setFormState(1);
+                  setError("");
+                }}
+                sx={{ ml: 1 }}
+              >
+                Sign Up
+              </Button>
+            </Box>
 
-                            <p style={{ color: "red" }}>{error}</p>
+            <Box component="form" onSubmit={handleAuth}>
+              {formState === 1 && (
+                <>
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    label="Full name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
 
-                            <Button
-                                type="button"
-                                fullWidth
-                                variant="contained"
-                                sx={{ mt: 3, mb: 2 }}
-                                onClick={handleAuth}
-                            >
-                                {formState === 0 ? "Login " : "Register"}
-                            </Button>
+                  <TextField
+                    select
+                    margin="normal"
+                    required
+                    fullWidth
+                    label="I want to join as a"
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                  >
+                    <MenuItem value="student">Student — Find mentors</MenuItem>
+                    <MenuItem value="mentor">
+                      Mentor — Conduct interviews
+                    </MenuItem>
+                  </TextField>
+                </>
+              )}
 
-                        </Box>
-                    </Box>
-                </Grid>
-            </Grid>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                label="Username"
+                autoComplete="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
 
-            <Snackbar
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                label="Password"
+                type="password"
+                autoComplete={
+                  formState === 0 ? "current-password" : "new-password"
+                }
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <FormControlLabel
+                sx={{
+                  mt: 2,
+                  alignItems: "flex-start",
+                  "& .MuiFormControlLabel-label": {
+                    fontSize: "0.85rem",
+                    color: "text.secondary",
+                  },
+                }}
+                control={
+                  <Checkbox
+                    checked={acceptedTerms}
+                    onChange={(e) => setAcceptedTerms(e.target.checked)}
+                    color="primary"
+                    size="small"
+                  />
+                }
+                label={
+                  <span>
+                    I agree to the{" "}
+                    <a href="/terms" target="_blank" rel="noreferrer">
+                      Terms and Conditions
+                    </a>{" "}
+                    and{" "}
+                    <a href="/privacy" target="_blank" rel="noreferrer">
+                      Privacy Policy
+                    </a>
+                    .
+                  </span>
+                }
+              />
 
-                open={open}
-                autoHideDuration={4000}
-                message={message}
-            />
+              {error && (
+                <Alert severity="error" sx={{ mt: 2 }}>
+                  {error}
+                </Alert>
+              )}
 
-        </ThemeProvider>
-    );
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                disabled={loading}
+                sx={{
+                  mt: 3,
+                  py: 1.4,
+                  fontWeight: 700,
+                }}
+              >
+                {loading
+                  ? "Please wait..."
+                  : formState === 0
+                    ? "Sign In"
+                    : "Create Account"}
+              </Button>
+            </Box>
+
+            <Button fullWidth sx={{ mt: 2 }} onClick={() => navigate("/")}>
+              Back to Home
+            </Button>
+          </Box>
+        </Grid>
+      </Grid>
+
+      <Snackbar
+        open={open}
+        autoHideDuration={4000}
+        onClose={() => setOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          severity="success"
+          onClose={() => setOpen(false)}
+          variant="filled"
+        >
+          {message}
+        </Alert>
+      </Snackbar>
+    </ThemeProvider>
+  );
 }
