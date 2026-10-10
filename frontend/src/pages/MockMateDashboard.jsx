@@ -113,7 +113,7 @@ export default function MockMateDashboard() {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        "http://localhost:8000/api/v1/ai/improvement-plan",
+        "https://tricity-backend.onrender.com/api/v1/ai/improvement-plan",
         {
           method: "POST",
           headers: {

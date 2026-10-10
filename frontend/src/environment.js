@@ -1,4 +1,4 @@
 
-const server = "http://localhost:8000";
+const server = "https://tricity-backend.onrender.com";
 
 export default server;

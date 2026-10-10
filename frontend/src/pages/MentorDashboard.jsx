@@ -41,7 +41,7 @@ export default function MentorDashboard() {
       formData.append("token", token);
 
       const response = await fetch(
-        "http://localhost:8000/api/v1/documents/upload",
+        "https://tricity-backend.onrender.com/api/v1/documents/upload",
         {
           method: "POST",
           body: formData,
