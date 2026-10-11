@@ -2169,3 +2169,81 @@
     gap: 16px;
   }
 }
+
+/* Interview feedback form */
+.mm-feedback-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid #dce7ef;
+  border-radius: 12px;
+  background: #f8fbfd;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.mm-feedback-form h3 {
+  margin: 0 0 8px;
+  color: #102a43;
+}
+
+.mm-feedback-form label {
+  display: block;
+  margin: 6px 0 0;
+  color: #334e68;
+  font-weight: 600;
+}
+
+.mm-feedback-form select,
+.mm-feedback-form textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid #cbd8e5;
+  border-radius: 10px;
+  background: #fff;
+  color: #243b53;
+  font: inherit;
+}
+
+.mm-feedback-form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.mm-feedback-form select:focus,
+.mm-feedback-form textarea:focus {
+  outline: none;
+  border-color: #0d9488;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
+}
+
+.mm-feedback-form p {
+  margin: 6px 0;
+  overflow-wrap: anywhere;
+}
+
+.mm-feedback-form button {
+  justify-self: start;
+  margin-top: 6px;
+  padding: 11px 18px;
+  border: 0;
+  border-radius: 9px;
+  background: #0d9488;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mm-feedback-form button[type="button"] {
+  background: #e8eef4;
+  color: #334e68;
+}
+
+.mm-feedback-form button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}

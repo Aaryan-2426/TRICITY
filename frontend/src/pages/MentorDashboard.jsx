@@ -340,7 +340,7 @@ export default function MentorDashboard() {
                     {feedbackBookingId === booking._id && (
                       <form
                         onSubmit={handleSubmitFeedback}
-                        className="mm-profile-form"
+                        className="mm-feedback-form"
                       >
                         <h3>Interview Feedback</h3>
 
