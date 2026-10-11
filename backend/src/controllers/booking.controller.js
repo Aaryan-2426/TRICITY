@@ -205,20 +205,7 @@ const submitFeedback = async (req, res) => {
         message: "Please log in as a mentor",
       });
     }
-    const existingBooking = await Booking.findOne({
-      studentUsername: student.username,
-      mentorUsername: mentor.username,
-      date,
-      time,
-      status: { $in: ["pending", "confirmed"] },
-    });
-
-    if (existingBooking) {
-      return res.status(httpStatus.CONFLICT).json({
-        message:
-          "You already have a booking with this mentor at that date and time",
-      });
-    }
+    
 
     const booking = await Booking.findOne({
       _id: bookingId,
